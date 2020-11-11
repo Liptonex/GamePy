@@ -3,7 +3,8 @@ import random
 import math
 from pygame import mixer
 import os
-os.environ['SDL_AUDIODRIVER'] = 'dsp'
+
+# os.environ['SDL_AUDIODRIVER'] = 'dsp'
 # You always need to initialise pygame
 pygame.init()
 
@@ -57,10 +58,20 @@ font = pygame.font.Font('Academic M54.ttf', 32)
 textX = 10
 textY = 10
 
+# Game over
+over_font = pygame.font.Font('Academic M54.ttf', 64)
+
 
 def showScore(x, y):
     score = font.render("Score: " + str(score_value), True, (0, 255, 255))
-    screen.blit(score, (x, x))
+    screen.blit(score, (x, y))
+
+
+def game_over_text():
+    over_text1 = over_font.render(f"GAME OVER", True, (255, 255, 255))
+    over_text2 = over_font.render(f"Score: {score_value}", True, (255, 255, 255))
+    screen.blit(over_text1, (250, 250))
+    screen.blit(over_text2, (290, 320))
 
 
 # Ready - You can't see the bullet on the screen
@@ -105,6 +116,8 @@ while running:
                 playerX_change = 0.3
             if event.key == pygame.K_SPACE:
                 if bullet_state == "ready":
+                    shot_sound = mixer.Sound('shot_sound.wav')
+                    shot_sound.play()
                     bulletX = playerX
                     fire_bullet(bulletX, playerY)
         if event.type == pygame.KEYUP:
@@ -119,6 +132,10 @@ while running:
 
     # Enemy movement
     for i in range(num_of_enemies):
+        if enemyY[i] > 440:
+            game_over_text()
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
         enemyX[i] += enemyX_change[i]
         if enemyX[i] < 0:
             enemyX_change[i] = 0.2
@@ -129,6 +146,8 @@ while running:
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
         if collision:
+            collision_sound = mixer.Sound('explosion_sound.wav')
+            collision_sound.play()
             bulletY = 480
             bullet_state = "ready"
             score_value += 1
