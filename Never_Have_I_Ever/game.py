@@ -30,10 +30,6 @@ def newPrompt():
     data.remove(prompt)
 
 
-# def showPrompt():
-#     score = font.render(prompt, True, (0, 0, 0))
-#     screen.blit(score, (300, 300))
-
 def renderTextCenteredAt(text, font, colour, x, y, screen, allowed_width):
     # first, split the text into words
     words = text.split()
