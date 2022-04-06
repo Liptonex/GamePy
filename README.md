@@ -1,3 +1,3 @@
 # GamePy
 
-A simple 2D game created using Python. 
+A simple 2D game called SpaceInvaders created using Python. 
