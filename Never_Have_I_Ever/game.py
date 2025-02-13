@@ -3,7 +3,7 @@ import random
 
 # Open the file 'data.txt' in read mode and read all lines into a list
 # file = open('database_PL.txt', 'r')  # Polish version
-file = open('data.txt', 'r')  # English version
+file = open('Never_Have_I_Ever/database.txt', 'r')  # English version
 data = file.readlines()
 file.close()
 
@@ -15,7 +15,7 @@ screen = pygame.display.set_mode((1900, 1080), pygame.RESIZABLE)  # Width, Heigh
 
 # Set the title and icon for the application
 pygame.display.set_caption("Never have I ever...")
-icon = pygame.image.load("cheers.png")
+icon = pygame.image.load("Never_Have_I_Ever/cheers.png")
 pygame.display.set_icon(icon)
 
 # Set the font for rendering text
