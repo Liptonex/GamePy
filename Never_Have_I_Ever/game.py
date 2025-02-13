@@ -1,43 +1,63 @@
 import pygame
 import random
 
-# file = open('database_PL.txt', 'r')  # Wersja PL
-file = open('data.txt', 'r')  # Wersja ENG
-
+# Open the file 'data.txt' in read mode and read all lines into a list
+# file = open('database_PL.txt', 'r')  # Polish version
+file = open('data.txt', 'r')  # English version
 data = file.readlines()
 file.close()
 
-# INIT!
+# Initialize Pygame
 pygame.init()
-# Background
+
+# Set up the display window with a resizable screen of size 1900x1080
 screen = pygame.display.set_mode((1900, 1080), pygame.RESIZABLE)  # Width, Height
 
-# Title and icon
+# Set the title and icon for the application
 pygame.display.set_caption("Never have I ever...")
 icon = pygame.image.load("cheers.png")
 pygame.display.set_icon(icon)
 
-# Font
+# Set the font for rendering text
 font = pygame.font.Font('freesansbold.ttf', 54)
+
+# Choose a random prompt from the data and remove it from the list
 prompt = random.choice(data)
 data.remove(prompt)
 print(prompt)
 
 
 def newPrompt():
+    """
+    Selects a new random prompt from the remaining data and removes it from the list.
+    Also updates the global `prompt` variable.
+    """
     global prompt
     prompt = random.choice(data)
     data.remove(prompt)
 
 
 def renderTextCenteredAt(text, font, colour, x, y, screen, allowed_width):
-    # first, split the text into words
+    """
+    Renders the given text centered at the specified (x, y) position on the screen.
+    The text is automatically wrapped to fit within the allowed width.
+
+    Args:
+        text (str): The text to render.
+        font (pygame.font.Font): The font to use for rendering.
+        colour (tuple): The color of the text in RGB format.
+        x (int): The x-coordinate for the center of the text.
+        y (int): The y-coordinate for the top of the text.
+        screen (pygame.Surface): The surface to render the text on.
+        allowed_width (int): The maximum allowed width for the text.
+    """
+    # Split the text into words
     words = text.split()
 
-    # now, construct lines out of these words
+    # Construct lines out of these words
     lines = []
     while len(words) > 0:
-        # get as many words as will fit within allowed_width
+        # Get as many words as will fit within allowed_width
         line_words = []
         while len(words) > 0:
             line_words.append(words.pop(0))
@@ -45,49 +65,61 @@ def renderTextCenteredAt(text, font, colour, x, y, screen, allowed_width):
             if fw > allowed_width:
                 break
 
-        # add a line consisting of those words
+        # Add a line consisting of those words
         line = ' '.join(line_words)
         lines.append(line)
 
-    # now we've split our text into lines that fit into the width, actually
-    # render them
-
-    # we'll render each line below the last, so we need to keep track of
-    # the culmative height of the lines we've rendered so far
+    # Render each line below the last
     y_offset = 0
     for line in lines:
         fw, fh = font.size(line)
 
-        # (tx, ty) is the top-left of the font surface
+        # Calculate the top-left position of the font surface
         tx = x - fw / 2
         ty = y + y_offset
 
+        # Render the line and blit it onto the screen
         font_surface = font.render(line, True, colour)
         screen.blit(font_surface, (tx, ty))
 
+        # Update the y_offset for the next line
         y_offset += fh
 
 
 def colorMix():
+    """
+    Generates a random RGB color with values between 50 and 255 for each channel.
+
+    Returns:
+        tuple: A tuple representing the RGB color.
+    """
     x = random.randint(50, 255)
     y = random.randint(50, 255)
     z = random.randint(50, 255)
-    all = [x, y, z]
-    return tuple(all)
+    return (x, y, z)
 
 
+# Generate an initial random color
 color = colorMix()
 
+# Main game loop
 running = True
 while running:
+    # Fill the screen with the current color
     screen.fill(color)
-    # screen.blit(background, (0, 0))
+
+    # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE or pygame.K_RETURN:
+                # Generate a new prompt and color when space or enter is pressed
                 newPrompt()
                 color = colorMix()
+
+    # Render the current prompt centered on the screen
     renderTextCenteredAt(prompt, font, (0, 0, 0), 950, 500, screen, 1070)
+
+    # Update the display
     pygame.display.update()
